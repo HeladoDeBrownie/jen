@@ -12,7 +12,16 @@
   (define (expand a-clause)
     (make-list (clause-weight a-clause) (clause-thunk a-clause)))
   (define expanded-clauses (flatten (map expand (rule-clauses a-rule))))
-  ((random-ref expanded-clauses)))
+  (match expanded-clauses
+    ((cons clause rest)
+     ((random-ref expanded-clauses)))
+    (_
+     (backtrack))))
+
+(define (backtrack)
+  (raise (exn:backtrack "backtrack" (current-continuation-marks))))
+
+(struct exn:backtrack exn ())
 
 (struct rule (clauses)
   #:property prop:procedure evaluate-rule)
