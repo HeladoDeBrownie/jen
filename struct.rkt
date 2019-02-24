@@ -20,7 +20,10 @@
 (struct clause (thunk weight))
 
 (module+ main
+  (define start (rule (list
+                       (clause (λ () (~a (greeting) " :3")) 1))))
+  (define greeting (rule (list
+                          (clause (λ () "hewwo") 9)
+                          (clause (λ () "hoi") 1))))
   (for ((_ (in-range 100)))
-    (displayln ((rule (list
-                       (clause (λ () "hewwo :3") 9)
-                       (clause (λ () "hoi :3") 1)))))))
+    (displayln (start))))
