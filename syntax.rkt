@@ -1,8 +1,19 @@
 #lang racket
-(require "struct.rkt")
+(require
+  (for-syntax syntax/parse)
+  "struct.rkt")
 
-(define-syntax (define-rule a-syntax)
-  (raise-syntax-error #f "TODO" a-syntax))
+(define-syntax define-rule
+  (syntax-parser
+    #:literals (~>)
+    ((_ identifier:identifier
+        (~> expression:expr ...
+            (~optional (~seq #:weight weight:exact-positive-integer))) ...)
+     #'(define (identifier)
+         (error 'TODO)))))
+
+(define-syntax (~> a-syntax)
+  (raise-syntax-error #f "not allowed as an expression" a-syntax))
 
 (module+ main
   (define-rule start
