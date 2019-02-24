@@ -12,11 +12,13 @@
   (define (expand a-clause)
     (make-list (clause-weight a-clause) (clause-thunk a-clause)))
   (define expanded-clauses (flatten (map expand (rule-clauses a-rule))))
-  (match expanded-clauses
-    ((cons clause rest)
-     ((random-ref expanded-clauses)))
-    (_
-     (backtrack))))
+  (let loop ((remaining (shuffle expanded-clauses)))
+    (match remaining
+      ((cons thunk now-remaining)
+       (with-handlers ((exn:backtrack? (λ (_) (loop now-remaining))))
+         (thunk)))
+      (_
+       (backtrack)))))
 
 (define (backtrack)
   (raise (exn:backtrack "backtrack" (current-continuation-marks))))
@@ -29,10 +31,15 @@
 (struct clause (thunk weight))
 
 (module+ main
-  (define start (rule (list
-                       (clause (λ () (~a (greeting) " :3")) 1))))
-  (define greeting (rule (list
-                          (clause (λ () "hewwo") 9)
-                          (clause (λ () "hoi") 1))))
+  (define start
+    (rule (list
+           (clause (λ () (~a (greeting) " :3")) 1))))
+  (define greeting
+    (rule (list
+           (clause (λ () "hewwo") 9)
+           (clause (λ () "hoi") 1)
+           (clause (λ () (~a "this clause always backtracks" (empty))) 1))))
+  (define empty
+    (rule (list)))
   (for ((_ (in-range 100)))
     (displayln (start))))
