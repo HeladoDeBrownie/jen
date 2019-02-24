@@ -1,5 +1,7 @@
 #lang racket
-(require racket/random)
+(require
+  racket/hash
+  racket/random)
 (provide
   (contract-out
    (struct rule
@@ -12,19 +14,29 @@
      ((thunk (-> any/c))))))
 
 (define (evaluate-rule a-rule)
-  (define (expand a-clause)
-    (make-list (clause-weight a-clause) (clause-thunk a-clause)))
-  (define expanded-clauses (flatten (map expand (rule-clauses a-rule))))
-  (let loop ((remaining (shuffle expanded-clauses)))
-    (match remaining
-      ((cons thunk now-remaining)
-       (with-handlers ((exn:backtrack? (λ (_) (loop now-remaining))))
-         (thunk)))
-      (_
+  (let loop ((remaining
+              (make-immutable-hash
+               (map
+                (λ (a-clause)
+                  (cons (clause-thunk a-clause) (clause-weight a-clause)))
+                (rule-clauses a-rule)))))
+    (cond
+      ((hash-empty? remaining)
        (define a-default-clause (rule-default-clause a-rule))
        (if a-default-clause
            ((default-clause-thunk a-default-clause))
-           (backtrack))))))
+           (backtrack)))
+      (else
+       (define-values (thunk now-remaining)
+         (choose-randomly-from-weighted-set remaining))
+       (with-handlers ((exn:backtrack? (λ (_) (loop now-remaining))))
+         (thunk))))))
+
+(define (choose-randomly-from-weighted-set a-weighted-set)
+  (define (expand thunk weight)
+    (make-list weight thunk))
+  (define choice (random-ref (flatten (hash-map a-weighted-set expand))))
+  (values choice (hash-remove a-weighted-set choice)))
 
 (define (backtrack)
   (raise (exn:backtrack "backtrack" (current-continuation-marks))))
@@ -47,7 +59,7 @@
     (rule (list
            (clause (λ () "hewwo") 9)
            (clause (λ () "hoi") 1)
-           (clause (λ () (~a "this clause always backtracks" (empty))) 1))
+           (clause (λ () (~a "this clause always backtracks" (empty))) 10000))
           #f))
   (define empty
     (rule (list) #f))
