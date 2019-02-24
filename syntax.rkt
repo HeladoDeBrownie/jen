@@ -1,7 +1,7 @@
 #lang racket
 (require
   (for-syntax syntax/parse)
-  "struct.rkt")
+  "semantics.rkt")
 (provide
   define-rule
   ~>
