@@ -16,6 +16,7 @@
 (struct clause (thunk))
 
 (module+ main
-  ((rule (list
-         (clause (λ () "hewwo :3"))
-         (clause (λ () "hoi :3"))))))
+  (for ((_ (in-range 100)))
+    (displayln ((rule (list
+                       (clause (λ () "hewwo :3"))
+                       (clause (λ () "hoi :3"))))))))
