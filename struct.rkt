@@ -14,12 +14,13 @@
      ((thunk (-> any/c))))))
 
 (define (evaluate-rule a-rule)
-  (let loop ((remaining
-              (make-immutable-hash
-               (map
-                (λ (a-clause)
-                  (cons (clause-thunk a-clause) (clause-weight a-clause)))
-                (rule-clauses a-rule)))))
+  (let loop
+    ((remaining
+      (make-immutable-hash
+       (map
+        (λ (a-clause)
+          (cons (clause-thunk a-clause) (clause-weight a-clause)))
+        (rule-clauses a-rule)))))
     (cond
       ((hash-empty? remaining)
        (define a-default-clause (rule-default-clause a-rule))
