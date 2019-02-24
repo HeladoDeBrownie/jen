@@ -8,9 +8,14 @@
     #:literals (~>)
     ((_ identifier:identifier
         (~> expression:expr ...
-            (~optional (~seq #:weight weight:exact-positive-integer))) ...)
-     #'(define (identifier)
-         (error 'TODO)))))
+            (~optional (~seq #:weight weight:exact-positive-integer)
+                       #:defaults ((weight #'1))))
+        ...)
+     #'(define identifier
+         (rule (list
+                (clause (λ () (~a expression ...))
+                        weight)
+                ...))))))
 
 (define-syntax (~> a-syntax)
   (raise-syntax-error #f "not allowed as an expression" a-syntax))
