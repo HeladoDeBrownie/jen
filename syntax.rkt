@@ -27,7 +27,7 @@
   (define-rule greeting
     (~> "hewwo" #:weight 9)
     (~> "hoi")
-    (~> "this clause always backtracks" (empty)))
+    (~> "this clause always backtracks" (empty) #:weight 10000))
 
   (define-rule empty)
 
