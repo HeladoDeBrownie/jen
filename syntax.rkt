@@ -2,6 +2,9 @@
 (require
   (for-syntax syntax/parse)
   "struct.rkt")
+(provide
+  define-rule
+  ~>)
 
 (define-syntax define-rule
   (syntax-parser
