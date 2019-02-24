@@ -3,10 +3,13 @@
 (provide
   (contract-out
    (struct rule
-     ((clauses (listof clause?))))
+     ((clauses (listof clause?))
+      (default-clause (or/c default-clause? #f))))
    (struct clause
      ((thunk (-> any/c))
-      (weight positive-integer?)))))
+      (weight positive-integer?)))
+   (struct default-clause
+     ((thunk (-> any/c))))))
 
 (define (evaluate-rule a-rule)
   (define (expand a-clause)
@@ -18,28 +21,35 @@
        (with-handlers ((exn:backtrack? (λ (_) (loop now-remaining))))
          (thunk)))
       (_
-       (backtrack)))))
+       (define a-default-clause (rule-default-clause a-rule))
+       (if a-default-clause
+           ((default-clause-thunk a-default-clause))
+           (backtrack))))))
 
 (define (backtrack)
   (raise (exn:backtrack "backtrack" (current-continuation-marks))))
 
 (struct exn:backtrack exn ())
 
-(struct rule (clauses)
+(struct rule (clauses default-clause)
   #:property prop:procedure evaluate-rule)
 
 (struct clause (thunk weight))
 
+(struct default-clause (thunk))
+
 (module+ main
   (define start
     (rule (list
-           (clause (λ () (~a (greeting) " :3")) 1))))
+           (clause (λ () (~a (greeting) " :3")) 1))
+          #f))
   (define greeting
     (rule (list
            (clause (λ () "hewwo") 9)
            (clause (λ () "hoi") 1)
-           (clause (λ () (~a "this clause always backtracks" (empty))) 1))))
+           (clause (λ () (~a "this clause always backtracks" (empty))) 1))
+          #f))
   (define empty
-    (rule (list)))
+    (rule (list) #f))
   (for ((_ (in-range 100)))
     (displayln (start))))
