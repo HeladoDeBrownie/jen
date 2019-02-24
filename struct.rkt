@@ -47,12 +47,15 @@
   (define start
     (rule (list
            (clause (λ () (~a (greeting) " :3")) 1))))
+
   (define greeting
     (rule (list
            (clause (λ () "hewwo") 9)
            (clause (λ () "hoi") 1)
            (clause (λ () (~a "this clause always backtracks" (empty))) 10000))))
+
   (define empty
     (rule (list)))
+
   (for ((_ (in-range 100)))
     (displayln (start))))
