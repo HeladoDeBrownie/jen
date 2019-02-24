@@ -8,20 +8,20 @@
 
 (define-syntax define-rule
   (syntax-parser
-    #:literals (~>)
     ((_ identifier:identifier
-        (~> expression:expr ...
-            (~optional (~seq #:weight weight:exact-positive-integer)
-                       #:defaults ((weight #'1))))
+        a-clause
         ...)
-     #'(define identifier
-         (rule (list
-                (clause (λ () (~a expression ...))
-                        weight)
-                ...))))))
+     #'(define identifier (rule (list
+                                 a-clause
+                                 ...))))))
 
-(define-syntax (~> a-syntax)
-  (raise-syntax-error #f "not allowed as an expression" a-syntax))
+(define-syntax ~>
+  (syntax-parser
+    ((_ expression:expr ...
+        (~optional (~seq #:weight weight:exact-positive-integer)
+                   #:defaults ((weight #'1))))
+     #'(clause (λ () (~a expression ...))
+               weight))))
 
 (module+ main
   (define-rule start
