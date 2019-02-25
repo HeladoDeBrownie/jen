@@ -34,7 +34,7 @@
   (subset? (list->set flags) (rule-state-flags)))
 
 (define (off? . flags)
-  (empty? (set-intersect (rule-state-flags) (list->set flags))))
+  (set-empty? (set-intersect (rule-state-flags) (list->set flags))))
 
 (define (needs . flags)
   (unless (apply on? flags)
