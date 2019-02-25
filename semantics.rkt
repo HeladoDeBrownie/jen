@@ -16,16 +16,16 @@
       (make-immutable-hash
        (map
         (λ (a-clause)
-          (cons (clause-thunk a-clause) (clause-weight a-clause)))
+          (cons a-clause (clause-weight a-clause)))
         (rule-clauses a-rule)))))
     (cond
       ((hash-empty? remaining)
        (backtrack))
       (else
-       (define-values (thunk now-remaining)
+       (define-values (a-clause now-remaining)
          (choose-randomly-from-weighted-set remaining))
        (with-handlers ((exn:backtrack? (λ (_) (loop now-remaining))))
-         (thunk))))))
+         (a-clause))))))
 
 (define (choose-randomly-from-weighted-set a-weighted-set)
   (define (expand thunk weight)
@@ -41,7 +41,8 @@
 (struct rule (clauses)
   #:property prop:procedure evaluate-rule)
 
-(struct clause (thunk weight))
+(struct clause (thunk weight)
+  #:property prop:procedure (struct-field-index thunk))
 
 (module+ main
   (define start
