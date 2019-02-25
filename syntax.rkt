@@ -22,9 +22,12 @@
         (~optional (~seq #:weight weight:exact-positive-integer)
                    #:defaults ((weight #'1)))
         (~optional (~seq #:combiner combiner:expr)
-                   #:defaults ((combiner #'~a))))
+                   #:defaults ((combiner #'combine-strings))))
      #'(clause (λ () (combiner expression ...))
                weight))))
+
+(define (combine-strings . values)
+  (apply ~a (filter (negate void?) values)))
 
 (define-syntax-rule ($> form ...)
   (~> form ... #:combiner begin))
