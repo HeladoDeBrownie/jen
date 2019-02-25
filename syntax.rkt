@@ -6,6 +6,7 @@
   define-rule
   ~>
   define-clause-syntax/combiner
+  combine-strings
   $>)
 
 (define-syntax define-rule
