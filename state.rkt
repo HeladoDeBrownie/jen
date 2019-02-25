@@ -9,7 +9,9 @@
    (on? (any/c . -> . boolean?))
    (off? (any/c . -> . boolean?))
    (needs (any/c . -> . void))
-   (needs-not (any/c . -> . void)))
+   (needs-not (any/c . -> . void))
+   (toggles-off (any/c . -> . void))
+   (toggles-on (any/c . -> . void)))
   once)
 
 (define (turn-on a-flag)
@@ -31,6 +33,14 @@
 (define (needs-not a-flag)
   (unless (off? a-flag)
     (backtrack)))
+
+(define (toggles-off a-flag)
+  (needs a-flag)
+  (turn-off a-flag))
+
+(define (toggles-on a-flag)
+  (needs-not a-flag)
+  (turn-on a-flag))
 
 (define-syntax (once a-syntax)
   (define a-flag (gensym))
