@@ -5,6 +5,7 @@
 (provide
   define-rule
   ~>
+  define-clause-syntax/combiner
   $>)
 
 (define-syntax define-rule
@@ -26,11 +27,16 @@
      #'(clause (λ () (combiner expression ...))
                weight))))
 
+(define-syntax define-clause-syntax/combiner
+  (syntax-parser
+    ((_ identifier:identifier combiner:expr)
+     #'(define-syntax-rule (identifier form (... ...))
+         (~> form (... ...) #:combiner combiner)))))
+
 (define (combine-strings . values)
   (apply ~a (filter (negate void?) values)))
 
-(define-syntax-rule ($> form ...)
-  (~> form ... #:combiner begin))
+(define-clause-syntax/combiner $> begin)
 
 (module+ main
   (define-rule start
