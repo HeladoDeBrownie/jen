@@ -1,7 +1,9 @@
 #lang racket
 (require
-  "semantics.rkt"
-  "syntax.rkt")
+  "syntax.rkt"
+  "state.rkt"
+  "semantics.rkt")
 (provide (all-from-out
-          "semantics.rkt"
-          "syntax.rkt"))
+          "syntax.rkt"
+          "state.rkt"
+          "semantics.rkt"))
