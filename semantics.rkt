@@ -12,7 +12,7 @@
 
 (define (evaluate-rule a-rule)
   (let loop ((untried-clauses (rule->weighted-set a-rule)))
-    (when (hash-empty? untried-clauses)
+    (when (weighted-set-empty? untried-clauses)
       (backtrack))
     (define-values (clause-to-try untried-clauses_)
       (weighted-set-remove-random untried-clauses))
