@@ -8,7 +8,7 @@
      ((clauses (listof clause?))))
    (struct clause
      ((thunk (-> any/c))
-      (weight positive-integer?)))))
+      (weight exact-positive-integer?)))))
 
 (define (evaluate-rule a-rule)
   (let loop
