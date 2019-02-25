@@ -8,6 +8,9 @@
    (struct clause
      ((thunk (-> any/c))
       (weight exact-positive-integer?)))
+   (struct exn:backtrack
+     ((message string?)
+      (continuation-marks continuation-mark-set?)))
    (backtrack (-> void))))
 
 (define (evaluate-rule a-rule)
