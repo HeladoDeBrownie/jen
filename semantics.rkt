@@ -46,7 +46,8 @@
     (rule (list
            (clause (λ () "hewwo") 9)
            (clause (λ () "hoi") 1)
-           (clause (λ () (~a "this clause always backtracks" (empty))) 10000))))
+           (clause (λ () (~a "this clause always backtracks" (empty)))
+                   1000000000))))
 
   (define empty
     (rule (list)))
