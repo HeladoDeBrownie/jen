@@ -4,6 +4,7 @@
   "semantics.rkt")
 (provide
   (contract-out
+   (rule-state-flags parameter?)
    (turn-on (any/c ... . -> . void))
    (turn-off (any/c ... . -> . void))
    (on? (any/c ... . -> . boolean?))
@@ -12,7 +13,16 @@
    (needs-not (any/c ... . -> . void))
    (toggles-off (any/c ... . -> . void))
    (toggles-on (any/c ... . -> . void)))
+  with-flags
   once)
+
+(define-syntax with-flags
+  (syntax-parser
+    ((_ (flag:expr ...) expression:expr)
+     #'(parameterize ((rule-state-flags (set flag ...)))
+         expression))))
+
+(define rule-state-flags (make-parameter #f))
 
 (define (turn-on . flags)
   (rule-state-flags (set-union (rule-state-flags) (list->set flags))))
