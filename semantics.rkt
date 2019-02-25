@@ -11,15 +11,13 @@
    (backtrack (-> void))))
 
 (define (evaluate-rule a-rule)
-  (let loop ((remaining (rule->weighted-set a-rule)))
-    (cond
-      ((hash-empty? remaining)
-       (backtrack))
-      (else
-       (define-values (a-clause now-remaining)
-         (weighted-set-remove-random remaining))
-       (with-handlers ((exn:backtrack? (λ (_) (loop now-remaining))))
-         (a-clause))))))
+  (let loop ((untried-clauses (rule->weighted-set a-rule)))
+    (when (hash-empty? untried-clauses)
+      (backtrack))
+    (define-values (clause-to-try untried-clauses_)
+      (weighted-set-remove-random untried-clauses))
+    (with-handlers ((exn:backtrack? (λ (_) (loop untried-clauses_))))
+      (clause-to-try))))
 
 (define (rule->weighted-set a-rule)
   (weighted-set
