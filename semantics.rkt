@@ -7,7 +7,7 @@
      ((clauses (listof clause?))))
    (struct clause
      ((thunk (-> any/c))
-      (weight exact-positive-integer?)))
+      (weight exact-nonnegative-integer?)))
    (struct exn:backtrack
      ((message string?)
       (continuation-marks continuation-mark-set?)))
@@ -15,7 +15,7 @@
 
 (define (evaluate-rule a-rule)
   (let loop ((untried-clauses (rule->weighted-set a-rule)))
-    (when (weighted-set-empty? untried-clauses)
+    (when ((weighted-set-total-weight untried-clauses) . = . 0)
       (backtrack))
     (define-values (clause-to-try untried-clauses_)
       (weighted-set-remove-random untried-clauses))
@@ -50,7 +50,8 @@
            (clause (λ () "hewwo") 9)
            (clause (λ () "hoi") 1)
            (clause (λ () (~a "this clause always backtracks" (empty)))
-                   1000000000))))
+                   1000000000)
+           (clause (λ () "this clause has zero weight") 0))))
 
   (define empty
     (rule (list)))

@@ -21,7 +21,7 @@
 (define-syntax ~>
   (syntax-parser
     ((_ expression:expr ...
-        (~optional (~seq #:weight weight:exact-positive-integer)
+        (~optional (~seq #:weight weight:exact-nonnegative-integer)
                    #:defaults ((weight #'1)))
         (~optional (~seq #:combiner combiner:expr)
                    #:defaults ((combiner #'combine-strings))))
@@ -46,7 +46,8 @@
   (define-rule greeting
     ($> "hewwo" #:weight 9)
     ($> "hoi")
-    (~> "this clause always backtracks" (empty) #:weight 10000))
+    (~> "this clause always backtracks" (empty) #:weight 10000)
+    ($> "this clause has zero weight" #:weight 0))
 
   (define-rule empty)
 

@@ -7,12 +7,14 @@
           (weighted-set/c contract?)
           (weighted-set-empty? (weighted-set/c . -> . boolean?))
           (weighted-set-remove-random
-           (weighted-set/c . -> . (values any/c weighted-set/c)))))
+           (weighted-set/c . -> . (values any/c weighted-set/c)))
+          (weighted-set-total-weight
+           (weighted-set/c . -> . exact-nonnegative-integer?))))
 
 (define weighted-set make-immutable-hash)
 
 (define weighted-set/c
-  (hash/c (-> any/c) exact-positive-integer? #:immutable #t))
+  (hash/c (-> any/c) exact-nonnegative-integer? #:immutable #t))
 
 (define weighted-set-empty? hash-empty?)
 
