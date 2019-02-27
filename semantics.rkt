@@ -1,6 +1,6 @@
 #lang racket
 (require
-  "weighted-set.rkt")
+  "private/weighted-set.rkt")
 (provide
   (contract-out
    (struct rule
