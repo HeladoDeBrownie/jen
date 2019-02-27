@@ -1,6 +1,5 @@
 #lang racket
 (require
-  math/base
   racket/random)
 (provide (contract-out
           (weighted-set
@@ -25,7 +24,7 @@
 (define weighted-set-empty? hash-empty?)
 
 (define (weighted-set-total-weight a-weighted-set)
-  (sum (hash-values a-weighted-set)))
+  (apply + (hash-values a-weighted-set)))
 
 (define (weighted-set-remove-random a-weighted-set)
   (define total-weight (weighted-set-total-weight a-weighted-set))
