@@ -39,22 +39,3 @@
 
 (struct clause (thunk weight)
   #:property prop:procedure (struct-field-index thunk))
-
-(module+ main
-  (define start
-    (rule (list
-           (clause (λ () (~a (greeting) " :3")) 1))))
-
-  (define greeting
-    (rule (list
-           (clause (λ () "hewwo") 9)
-           (clause (λ () "hoi") 1)
-           (clause (λ () (~a "this clause always backtracks" (empty)))
-                   1000000000)
-           (clause (λ () "this clause has zero weight") 0))))
-
-  (define empty
-    (rule (list)))
-
-  (for ((_ (in-range 100)))
-    (displayln (start))))

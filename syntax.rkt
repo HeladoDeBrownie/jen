@@ -38,18 +38,3 @@
   (apply ~a (filter (negate void?) values)))
 
 (define-clause-syntax/combiner $> begin)
-
-(module+ main
-  (define-rule start
-    (~> (greeting) " :3"))
-
-  (define-rule greeting
-    ($> "hewwo" #:weight 9)
-    ($> "hoi")
-    (~> "this clause always backtracks" (empty) #:weight 10000)
-    ($> "this clause has zero weight" #:weight 0))
-
-  (define-rule empty)
-
-  (for ((_ (in-range 100)))
-    (displayln (start))))
