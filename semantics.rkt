@@ -2,16 +2,13 @@
 (require
   "private/weighted-set.rkt")
 (provide
-  (contract-out
-   (struct rule
-     ((clauses (listof clause?))))
-   (struct clause
-     ((thunk (-> any/c))
-      (weight exact-nonnegative-integer?)))
-   (struct exn:backtrack
-     ((message string?)
-      (continuation-marks continuation-mark-set?)))
-   (backtrack (-> void))))
+ (contract-out
+  (struct rule
+    ((clauses (hash/c (-> any/c) (-> exact-nonnegative-integer?)))))
+  (struct exn:backtrack
+    ((message string?)
+     (continuation-marks continuation-mark-set?)))
+  (backtrack (-> none/c))))
 
 (define (evaluate-rule a-rule)
   (let loop ((untried-clauses (rule->weighted-set a-rule)))
@@ -24,10 +21,8 @@
 
 (define (rule->weighted-set a-rule)
   (weighted-set
-   (map
-    (λ (a-clause)
-      (cons a-clause (clause-weight a-clause)))
-    (rule-clauses a-rule))))
+   (for/hash (((thunk weight-thunk) (in-hash (rule-clauses a-rule))))
+     (values thunk (weight-thunk)))))
 
 (define (backtrack)
   (raise (exn:backtrack "backtrack" (current-continuation-marks))))
@@ -36,6 +31,3 @@
 
 (struct rule (clauses)
   #:property prop:procedure evaluate-rule)
-
-(struct clause (thunk weight)
-  #:property prop:procedure (struct-field-index thunk))

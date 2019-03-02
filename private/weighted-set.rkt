@@ -4,7 +4,7 @@
 (provide (contract-out
           (weighted-set
            (->
-            (listof (cons/c any/c exact-nonnegative-integer?))
+            (hash/c any/c exact-nonnegative-integer?)
             weighted-set/c))
           (weighted-set/c contract?)
           (weighted-set-empty? (weighted-set/c . -> . boolean?))
@@ -13,10 +13,10 @@
           (weighted-set-remove-random
            (weighted-set/c . -> . (values any/c weighted-set/c)))))
 
-(define (weighted-set an-association-list)
-  (define (positive-weight-pair? pair)
-    ((cdr pair) . > . 0))
-  (make-immutable-hash (filter positive-weight-pair? an-association-list)))
+(define (weighted-set a-hash)
+  (for/hash (((value weight) (in-hash a-hash))
+             #:unless (weight . = . 0))
+    (values value weight)))
 
 (define weighted-set/c
   (hash/c (-> any/c) exact-nonnegative-integer? #:immutable #t))
