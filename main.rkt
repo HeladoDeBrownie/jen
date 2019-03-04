@@ -1,9 +1,9 @@
 #lang racket
 (require
   "syntax.rkt"
-  "state.rkt"
+  "tag.rkt"
   (only-in "semantics.rkt" evaluate-rule))
 (provide (all-from-out
           "syntax.rkt"
-          "state.rkt"
+          "tag.rkt"
           "semantics.rkt"))
