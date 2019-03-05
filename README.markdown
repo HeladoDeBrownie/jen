@@ -1,3 +1,17 @@
 jen is a procedural generation library for Racket. It's primarily meant for generating text (strings) but can be used with any kind of value.
 
 jen is **UNSTABLE**. There are currently no release version, no documentation, no tests, no explicit roadmap, and no guarantee its interface won't change.
+
+If you want to try it out despite this warning, try installing it as a package and starting with this source:
+
+    #lang racket
+    (require jen)
+
+    (define-rule start
+      (~> (greeting) " :3"))
+
+    (define-rule greeting
+      (~> "hewwo")
+      (~> "hoi"))
+
+    (start)
