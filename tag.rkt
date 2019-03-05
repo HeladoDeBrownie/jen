@@ -15,9 +15,10 @@
   once)
 
 (define flags-key (string->uninterned-symbol "flags"))
-(rule-state (hash-set (rule-state) flags-key (set)))
 
 (define (rule-state-flags (new-value #f))
+  (unless (hash-ref (rule-state) flags-key #f)
+    (rule-state (hash-set (rule-state) flags-key (set))))
   (if new-value
       (rule-state (hash-set (rule-state) flags-key new-value))
       (hash-ref (rule-state) flags-key)))
