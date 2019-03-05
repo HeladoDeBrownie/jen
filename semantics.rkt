@@ -19,18 +19,25 @@
 
 (struct rule (clauses)
   #:property prop:procedure
-  (λ (this-rule)
+  (λ (this-rule #:default (default-value default-sentinel))
     (let loop ((untried-clauses (rule->weighted-set this-rule)))
-      (when (weighted-set-empty? untried-clauses)
-        (backtrack))
-      (define-values (clause-to-try untried-clauses_)
-        (weighted-set-remove-random untried-clauses))
-      (with-handlers ((exn:backtrack? (λ (_) (loop untried-clauses_))))
-        (define-values (result new-state)
-          (parameterize ((rule-state (rule-state)))
-            (values (clause-to-try) (rule-state))))
-        (rule-state new-state)
-        result))))
+      (cond
+        ((weighted-set-empty? untried-clauses)
+         (when (default-value . equal? . default-sentinel)
+           (backtrack))
+         default-value)
+        (else
+         (define-values (clause-to-try untried-clauses_)
+           (weighted-set-remove-random untried-clauses))
+         (with-handlers ((exn:backtrack? (λ (_) (loop untried-clauses_))))
+           (define-values (result new-state)
+             (parameterize ((rule-state (rule-state)))
+               (values (clause-to-try) (rule-state))))
+           (rule-state new-state)
+           result)))
+      )))
+
+(define default-sentinel (gensym))
 
 (define (rule->weighted-set a-rule)
   (weighted-set
