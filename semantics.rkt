@@ -9,7 +9,7 @@
   (struct exn:backtrack
     ((message string?)
      (continuation-marks continuation-mark-set?)))
-  (rule-state parameter?)))
+  (rule-state (parameter/c (or/c hash? #f)))))
 
 #| Provided Definitions |#
 
