@@ -6,7 +6,6 @@
  define-rule
  ~>
  define-clause-syntax/combiner
- combine-strings
  $>)
 
 (define-syntax define-rule
@@ -22,8 +21,8 @@
   (syntax-parser
     ((_ expression:expr ...
         (~optional (~seq #:combiner combiner:expr)
-                   #:defaults ((combiner #'combine-strings))))
-     #'(λ () (combiner expression ...)))))
+                   #:defaults ((combiner #'~a))))
+     #'(λ () (combine combiner expression ...)))))
 
 (define-syntax define-clause-syntax/combiner
   (syntax-parser
@@ -31,7 +30,7 @@
      #'(define-syntax-rule (identifier form (... ...))
          (~> form (... ...) #:combiner combiner)))))
 
-(define (combine-strings . values)
-  (apply ~a (filter (negate void?) values)))
+(define (combine combiner . values)
+  (apply combiner (filter (negate void?) values)))
 
 (define-clause-syntax/combiner $> begin)
