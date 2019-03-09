@@ -1,7 +1,9 @@
 #lang racket
 (require
-  "syntax.rkt"
-  "tag.rkt")
+  "base.rkt"
+  "tag.rkt"
+  "syntax.rkt")
 (provide (all-from-out
-          "syntax.rkt"
-          "tag.rkt"))
+          "base.rkt"
+          "tag.rkt"
+          "syntax.rkt"))
