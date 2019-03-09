@@ -1,7 +1,8 @@
 #lang scribble/manual
 @(require
-   (for-label jen)
-   (for-label racket))
+   (for-label racket)
+   (for-label jen/base)
+   (for-label jen/syntax))
 
 @title{jen}
 
@@ -9,7 +10,17 @@ jen is a Racket library for procedural generation of text and other data.
 
 @table-of-contents[]
 
+@defmodule[jen/base]{
+ @racket[jen/base] provides the low-level semantics and tools for working with
+ rules and clauses.
+
+ TODO
+}
+
 @defmodule[jen/syntax]{
+ @racket[jen/syntax] provides clean syntax on top of the rule primitives to make
+ it easier to work with them in common cases.
+                       
  @defform[(define-rule id clause ...)
           #:grammar
           ((clause (code:line proc-expr maybe-weight))
