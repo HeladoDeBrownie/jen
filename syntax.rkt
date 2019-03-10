@@ -5,8 +5,7 @@
 (provide
  define-rule
  ~>
- define-clause-syntax/combiner
- $>)
+ define-clause-syntax/combiner)
 
 (define-syntax define-rule
   (syntax-parser
@@ -32,5 +31,3 @@
 
 (define (combine combiner . values)
   (apply combiner (filter (negate void?) values)))
-
-(define-clause-syntax/combiner $> begin)
