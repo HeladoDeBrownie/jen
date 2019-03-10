@@ -73,9 +73,12 @@ TODO
                           (code:line #:combiner combiner-expr)))]{
  Returns a procedure taking no arguments and returning the result of applying
  @racket[combiner-expr] (by default, @racket[~a]) to each @racket[expr], but
- filtering out any values satisfying @racket[void?].
+ filtering out any values satisfying @racket[void?]. This is meant for use with
+ @racket[define-rule] but produces ordinary procedures, much like
+ @racket[thunk] but slightly more specialized.
 
  The @racket[void?]-filtering behavior is particularly useful alongside
- @racket[jen/tag], which contains many procedures that affect clause evaluation
- and return @racket[(void)].
+ @racketmodname[jen/tag], which contains many procedures that affect clause
+ evaluation and return @racket[(void)]. If this turns out to be undesirable,
+ it's still possible to use @racket[thunk] with @racket[define-rule].
 }
