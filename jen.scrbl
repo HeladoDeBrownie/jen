@@ -4,7 +4,7 @@
    (for-label jen/base)
    (for-label jen/syntax))
 
-@title{jen}
+@title{The jen Library}
 
 jen is a Racket library for procedural generation of text and other data.
 
@@ -16,6 +16,12 @@ TODO
 
 @section{Reference}
 
+@subsection{jen}
+
+@defmodule[jen]{
+ @racketmodname[jen] reprovides all of the modules described hereafter.
+}
+
 @subsection{jen/base}
 
 @defmodule[jen/base]{
@@ -25,7 +31,14 @@ TODO
 
 @defstruct*[rule
             ((clauses (hash/c (-> any/c) (-> exact-nonnegative-integer?))))]{
- TODO
+ The @racket[rule] structure represents procedural generation rules, the central
+ concept of this library.
+
+ @racket[clauses] is a hash where each mapping represents a clause that may be
+ randomly chosen. The key is the @emph{try thunk}, a nullary procedure that's
+ applied when the clause is chosen; and the value is the @emph{weight thunk},
+ also a nullary procedure and that's applied to determine the clause's
+ likelihood of being chosen.
 
  Calling a @racket[rule] value @emph{evaluates} the rule. TODO
 }
