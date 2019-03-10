@@ -26,11 +26,28 @@ TODO
 @defstruct*[rule
             ((clauses (hash/c (-> any/c) (-> exact-nonnegative-integer?))))]{
  TODO
+
+ Calling a @racket[rule] value @emph{evaluates} the rule. TODO
 }
 
 @defproc[(backtrack) none/c]{
- TODO
+ Signals a backtrack by raising an @racket[exn:backtrack] value.
 }
+
+@defstruct*[(exn:backtrack exn) ()]{
+ @racket[exn:backtrack] represents the backtrack signal.
+
+ Although usually unnecessary (see documentation for @racket[rule]), it's
+ possible to catch a backtrack manually by installing an @racket[exn:backtrack?]
+ handler. For example:
+
+ @racketblock[(with-handlers ((exn:backtrack? my-backtrack-handler))
+                (my-rule))]
+}
+
+@subsection{jen/tag}
+
+@defmodule[jen/tag]{TODO}
 
 @subsection{jen/syntax}
 
@@ -57,4 +74,8 @@ TODO
  Returns a procedure taking no arguments and returning the result of applying
  @racket[combiner-expr] (by default, @racket[~a]) to each @racket[expr], but
  filtering out any values satisfying @racket[void?].
+
+ The @racket[void?]-filtering behavior is particularly useful alongside
+ @racket[jen/tag], which contains many procedures that affect clause evaluation
+ and return @racket[(void)].
 }
