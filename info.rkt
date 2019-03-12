@@ -5,4 +5,4 @@
   '("base"
     "racket-doc"
     "scribble-lib"))
-(define scribblings '(("jen.scrbl" ())))
+(define scribblings '(("scribblings/jen.scrbl" (multi-page) (library))))
