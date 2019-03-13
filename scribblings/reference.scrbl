@@ -26,7 +26,25 @@
  also a nullary procedure, one that's applied to determine the clause's
  likelihood of being chosen.
 
- Calling a @racket[rule] value @emph{evaluates} the rule. TODO
+ Applying a @racket[rule] value @emph{evaluates} the rule. When a rule is
+ evaluated, its clauses' weight thunks are all evaluated, then try thunks are
+ evaluated at random, weighted by their corresponding computed weight, until one
+ of them succeeds, i.e., doesn't backtrack. (See @racket[backtrack] and
+ @racket[exn:backtrack].) If @emph{no} clause succeeds, then the entire rule
+ backtracks.
+
+ Rule evaluation is parameterized by @racket[rule-state], which will normally be
+ a hash as long as a rule is being evaluated. This hash isn't read or written to
+ by rule evaluation itself, but can be used by other modules that wish to make
+ some state backtrackable. Whenever a rule evaluated in the course of another
+ rule's evaluation modifies this state, if that subrule ends up backtracking,
+ the changes it made will be reverted.
+
+ Instead of backtracking, a rule can be made to return a specified value by
+ supplying a @racket[#:default] argument when applying it. This is useful for a
+ rule being evaluated outside of any other rule to avoid having to catch the
+ backtrack signal in case it would backtrack (but see @racket[exn:backtrack] for
+ how to do that).
 }
 
 @defproc[(backtrack) none/c]{
@@ -40,8 +58,20 @@
  possible to catch a backtrack manually by installing an @racket[exn:backtrack?]
  handler. For example:
 
- @racketblock[(with-handlers ((exn:backtrack? my-backtrack-handler))
-                (my-rule))]
+ @racketblock[(define-rule start)
+              
+              (with-handlers ((exn:backtrack? (const "It backtracked!")))
+                (start))]
+}
+
+@racketresult["It backtracked!"]
+
+@defparam[rule-state state (or/c hash? #f) #:value #f]{
+ @racket[rule-state] is used for @racket[rule]'s backtrackable state.
+
+ It's generally safe to read and write a specific key from the rule state hash,
+ but modifying it in other ways may cause modules relying on it to misbehave,
+ and is therefore @emph{unsafe}.
 }
 
 @section{Rule Syntax}
