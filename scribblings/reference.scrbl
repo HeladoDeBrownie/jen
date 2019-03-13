@@ -4,13 +4,11 @@
 
 @title{The jen Reference}
 
-@section{jen}
-
 @defmodule[jen]{
- @racketmodname[jen] reprovides all of the modules described hereafter.
+ @racketmodname[jen] reprovides all of the modules in this package.
 }
 
-@section{jen/base}
+@section{Rule Semantics}
 
 @defmodule[jen/base]{
  @racketmodname[jen/base] provides the low-level semantics and tools for working
@@ -46,11 +44,7 @@
                 (my-rule))]
 }
 
-@section{jen/tag}
-
-@defmodule[jen/tag]{TODO}
-
-@section{jen/syntax}
+@section{Rule Syntax}
 
 @defmodule[jen/syntax]{
  @racket[jen/syntax] provides clean syntax on top of the rule primitives to make
@@ -83,3 +77,7 @@
  evaluation and return @racket[(void)]. If this turns out to be undesirable,
  it's still possible to use @racket[thunk] with @racket[define-rule].
 }
+
+@section{Tagging State}
+
+@defmodule[jen/tag]{TODO}
