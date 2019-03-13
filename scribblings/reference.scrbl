@@ -26,12 +26,23 @@
  also a nullary procedure, one that's applied to determine the clause's
  likelihood of being chosen.
 
- Applying a @racket[rule] value @emph{evaluates} the rule. When a rule is
- evaluated, its clauses' weight thunks are all evaluated, then try thunks are
+ Applying a @racket[rule] value is the same as applying @racket[evaluate-rule]
+ to it.
+}
+
+@defproc[(evaluate-rule (a-rule rule?) (#:default default-value any/c
+                                        #,(emph "an opaque value"))) any/c]{
+ Evaluates a rule as follows:
+
+ The rule's clauses' weight thunks are all evaluated, then try thunks are
  evaluated at random, weighted by their corresponding computed weight, until one
  of them succeeds, i.e., doesn't backtrack. (See @racket[backtrack] and
- @racket[exn:backtrack].) If @emph{no} clause succeeds, then the entire rule
+ @racket[exn:backtrack].) If a clause succeeds, @racket[evaluate-rule] returns
+ the result of its try thunk. If @emph{no} clause succeeds, then the entire rule
  backtracks.
+
+ The probability of a clause being chosen is its computed weight divided by the
+ total of all clauses' computed weights.
 
  Rule evaluation is parameterized by @racket[rule-state], which will normally be
  a hash as long as a rule is being evaluated. This hash isn't read or written to
@@ -40,11 +51,11 @@
  rule's evaluation modifies this state, if that subrule ends up backtracking,
  the changes it made will be reverted.
 
- Instead of backtracking, a rule can be made to return a specified value by
- supplying a @racket[#:default] argument when applying it. This is useful for a
- rule being evaluated outside of any other rule to avoid having to catch the
- backtrack signal in case it would backtrack (but see @racket[exn:backtrack] for
- how to do that).
+ If a @racket[#:default] argument is provided, it will be the return value in
+ case the rule would have otherwise backtracked. This is useful for keeping the
+ backtrack signal from bubbling to the top when a rule is being evaluated
+ outside of any other rule. (See @racket[exn:backtrack] for how to deal with it
+ in general.)
 }
 
 @defproc[(backtrack) none/c]{
@@ -54,9 +65,9 @@
 @defstruct*[(exn:backtrack exn) ()]{
  @racket[exn:backtrack] represents the backtrack signal.
 
- Although usually unnecessary (see documentation for @racket[rule]), it's
- possible to catch a backtrack manually by installing an @racket[exn:backtrack?]
- handler. For example:
+ Although usually unnecessary (see @racket[evaluate-rule]), it's possible to
+ catch a backtrack manually by installing an @racket[exn:backtrack?] handler.
+ For example:
 
  @racketblock[(define-rule start)
               
@@ -69,7 +80,7 @@
 @defparam[rule-state state (or/c hash? #f) #:value #f]{
  @racket[rule-state] is used for @racket[rule]'s backtrackable state.
 
- It's generally safe to read and write a specific key from the rule state hash,
+ It's usually safe to read and write a specific key from the rule state hash,
  but modifying it in other ways may cause modules relying on it to misbehave,
  and is therefore @emph{unsafe}.
 }
