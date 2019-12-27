@@ -14,8 +14,6 @@
    (toggle-on (any/c ... . -> . void)))
   once)
 
-(define flags-key (string->uninterned-symbol "flags"))
-
 (define rule-state-flags (make-rule-state-parameter (set)))
 
 (define (on . flags)
