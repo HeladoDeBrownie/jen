@@ -44,13 +44,6 @@
  The probability of a clause being chosen is its computed weight divided by the
  total of all clauses' computed weights.
 
- Rule evaluation is parameterized by @racket[rule-state], which will normally be
- a hash as long as a rule is being evaluated. This hash isn't read or written to
- by rule evaluation itself, but can be used by other modules that wish to make
- some state backtrackable. Whenever a rule evaluated in the course of another
- rule's evaluation modifies this state, if that subrule ends up backtracking,
- the changes it made will be reverted.
-
  If a @racket[#:default] argument is provided, it will be the return value in
  case the rule would have otherwise backtracked. This is useful for keeping the
  backtrack signal from bubbling to the top when a rule is being evaluated
@@ -77,12 +70,9 @@
 
 @racketresult["It backtracked!"]
 
-@defparam[rule-state state (or/c hash? #f) #:value #f]{
- @racket[rule-state] is used for @racket[rule]'s backtrackable state.
-
- It's usually safe to read and write a specific key from the rule state hash,
- but modifying it in other ways may cause modules relying on it to misbehave,
- and is therefore @emph{unsafe}.
+@defproc[(make-rule-state-parameter (initial-value any/c #f)) parameter?]{
+ Makes a backtracking parameter. I.e., whenever a clause sets a parameter
+ produced by this procedure and subsequently backtracks, the change is undone.
 }
 
 @section{Rule Syntax}

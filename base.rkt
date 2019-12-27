@@ -10,7 +10,7 @@
   (struct exn:backtrack
     ((message string?)
      (continuation-marks continuation-mark-set?)))
-  (rule-state (parameter/c (or/c hash? #f)))))
+  (make-rule-state-parameter (() (any/c) . ->* . parameter?))))
 
 #| Provided Definitions |#
 
@@ -44,9 +44,15 @@
 
 (struct exn:backtrack exn ())
 
-(define rule-state (make-parameter #f))
+(define (make-rule-state-parameter (initial-value #f))
+  (define key (gensym))
+  (define (guard new-value) (hash-set (rule-state) key new-value))
+  (define (wrap actual-value) (hash-ref actual-value key initial-value))
+  (make-derived-parameter rule-state guard wrap))
 
 #| Internal Definitions |#
+
+(define rule-state (make-parameter #f))
 
 ; This is used by the rule procedure to detect that the user didn't supply a
 ; default value.
