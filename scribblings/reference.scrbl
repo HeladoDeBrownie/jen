@@ -93,8 +93,9 @@
                         (code:line #:weight weight-expr)))]{
  Produces a rule whose clauses are given by @racket[clause]s.
 
- @racket[proc-expr] is taken as the procedure evaluated when trying the clause,
- and @racket[weight-expr] (by default, @racket[1]) is the clause's weight.
+ For each clause, @racket[proc-expr] is evaluated immediately to obtain the
+ clause's try thunk, while @racket[weight-expr] (by default, @racket[1]) becomes
+ the body of the weight thunk and thus is evaluated only when the rule is.
 }
 
 @defform[(define-rule id rest ...)]{
