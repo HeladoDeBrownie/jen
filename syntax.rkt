@@ -3,10 +3,10 @@
   (for-syntax syntax/parse)
   "base.rkt")
 (provide
- rule
- define-rule
- ~>
- define-clause-syntax/combiner)
+  rule
+  define-rule
+  ~>
+  define-clause-syntax/combiner)
 
 (define-syntax rule
   (syntax-parser

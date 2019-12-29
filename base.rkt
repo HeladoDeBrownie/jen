@@ -2,15 +2,15 @@
 (require
   "private/weighted-set.rkt")
 (provide
- (contract-out
-  (evaluate-rule (rule-struct? #:default any/c . -> . any/c))
-  (struct rule-struct
-    ((clauses (hash/c (-> any/c) (-> exact-nonnegative-integer?)))))
-  (backtrack (-> none/c))
-  (struct exn:backtrack
-    ((message string?)
-     (continuation-marks continuation-mark-set?)))
-  (make-rule-state-parameter (() (any/c) . ->* . parameter?))))
+  (contract-out
+   (evaluate-rule (rule-struct? #:default any/c . -> . any/c))
+   (struct rule-struct
+     ((clauses (hash/c (-> any/c) (-> exact-nonnegative-integer?)))))
+   (backtrack (-> none/c))
+   (struct exn:backtrack
+     ((message string?)
+      (continuation-marks continuation-mark-set?)))
+   (make-rule-state-parameter (() (any/c) . ->* . parameter?))))
 
 #| Provided Definitions |#
 
