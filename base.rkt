@@ -3,8 +3,8 @@
   "private/weighted-set.rkt")
 (provide
  (contract-out
-  (evaluate-rule (rule? #:default any/c . -> . any/c))
-  (struct rule
+  (evaluate-rule (rule-struct? #:default any/c . -> . any/c))
+  (struct rule-struct
     ((clauses (hash/c (-> any/c) (-> exact-nonnegative-integer?)))))
   (backtrack (-> none/c))
   (struct exn:backtrack
@@ -14,9 +14,9 @@
 
 #| Provided Definitions |#
 
-(define (evaluate-rule a-rule #:default (default-value default-sentinel))
+(define (evaluate-rule a-rule-struct #:default (default-value default-sentinel))
   (define (go)
-    (let try-next ((untried-clauses (rule->weighted-set a-rule)))
+    (let try-next ((untried-clauses (rule->weighted-set a-rule-struct)))
       (cond
         ((weighted-set-empty? untried-clauses)
          (when (default-value . equal? . default-sentinel)
@@ -36,7 +36,7 @@
       (parameterize ((rule-state #hash()))
         (go))))
 
-(struct rule (clauses)
+(struct rule-struct (clauses)
   #:property prop:procedure evaluate-rule)
 
 (define (backtrack)
@@ -62,5 +62,5 @@
 ; present moment.
 (define (rule->weighted-set a-rule)
   (weighted-set
-   (for/hash (((thunk weight-thunk) (in-hash (rule-clauses a-rule))))
+   (for/hash (((thunk weight-thunk) (in-hash (rule-struct-clauses a-rule))))
      (values thunk (weight-thunk)))))

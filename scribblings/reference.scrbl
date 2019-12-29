@@ -15,10 +15,10 @@
  with rules and clauses.
 }
 
-@defstruct*[rule
+@defstruct*[rule-struct
             ((clauses (hash/c (-> any/c) (-> exact-nonnegative-integer?))))]{
- The @racket[rule] structure represents procedural generation rules, the central
- concept of this library.
+ The @racket[rule-struct] structure represents procedural generation rules, the
+ central concept of this library.
 
  @racket[clauses] is a hash where each mapping represents a clause that may be
  randomly chosen. The key is the @emph{try thunk}, a nullary procedure that's
@@ -26,12 +26,13 @@
  also a nullary procedure, one that's applied to determine the clause's
  likelihood of being chosen.
 
- Applying a @racket[rule] value is the same as applying @racket[evaluate-rule]
- to it.
+ Applying a @racket[rule-struct] value is the same as applying
+ @racket[evaluate-rule] to it.
 }
 
-@defproc[(evaluate-rule (a-rule rule?) (#:default default-value any/c
-                                        #,(emph "an opaque value"))) any/c]{
+@defproc[(evaluate-rule (a-rule-struct rule-struct?)
+                        (#:default default-value any/c
+                         #,(emph "an opaque value"))) any/c]{
  Evaluates a rule as follows:
 
  The rule's clauses' weight thunks are all evaluated, then try thunks are
@@ -82,15 +83,19 @@
  it easier to work with them in common cases.
 }
 
-@defform[(define-rule id clause ...)
+@defform[(rule clause ...)
          #:grammar
          ((clause (code:line proc-expr maybe-weight))
           (maybe-weight (code:line)
                         (code:line #:weight weight-expr)))]{
- Binds @racket[id] to a rule whose clauses are given by @racket[clause]s.
+ Produces a rule whose clauses are given by @racket[clause]s.
 
  @racket[proc-expr] is taken as the procedure evaluated when trying the clause,
  and @racket[weight-expr] (by default, @racket[1]) is the clause's weight.
+}
+
+@defform[(define-rule id rest ...)]{
+ Shorthand for @racket[(define id (rule rest ...))].
 }
 
 @defform[(~> expr ... maybe-combiner)
@@ -100,8 +105,8 @@
  Returns a procedure taking no arguments and returning the result of applying
  @racket[combiner-expr] (by default, @racket[~a]) to each @racket[expr], but
  filtering out any values satisfying @racket[void?]. This is meant for use with
- @racket[define-rule] but produces ordinary procedures, much like
- @racket[thunk] but slightly more specialized.
+ @racket[rule] or @racket[define-rule] but produces ordinary procedures, much
+ like @racket[thunk] but slightly more specialized.
 
  The @racket[void?]-filtering behavior is particularly useful alongside
  @racketmodname[jen/tag], which contains many procedures that affect clause

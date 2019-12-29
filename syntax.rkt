@@ -3,18 +3,23 @@
   (for-syntax syntax/parse)
   "base.rkt")
 (provide
+ rule
  define-rule
  ~>
  define-clause-syntax/combiner)
 
-(define-syntax define-rule
+(define-syntax rule
   (syntax-parser
-    ((_ identifier:identifier
-        (~seq a-clause
-              (~optional (~seq #:weight weight:expr)
-                         #:defaults ((weight #'1))))
-        ...)
-     #'(define identifier (rule (hash (~@ a-clause (λ () weight)) ...))))))
+    ((_
+      (~seq a-clause
+            (~optional (~seq #:weight weight:expr)
+                       #:defaults ((weight #'1))))
+      ...)
+     #'(rule-struct (hash (~@ a-clause (λ () weight)) ...)))))
+
+(define-syntax-rule
+  (define-rule id rest ...)
+  (define id (rule rest ...)))
 
 (define-syntax ~>
   (syntax-parser
