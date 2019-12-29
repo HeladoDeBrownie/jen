@@ -1,5 +1,19 @@
-jen is a procedural generation library for Racket. It's primarily meant for generating text (strings) but can be used with any kind of value.
+jen is a Racket package providing tools for procedural generation. While it's geared towards text, it can generate Racket values of any type.
 
-jen is **UNSTABLE**. There are currently no release version, incomplete documentation, no tests, no explicit roadmap, and no guarantee its interface won't change.
+# Installation
 
-If you want to try it out despite this warning, try installing it as a package and running `sample/cat-sentences.rkt` to see what it does. (Once you run it once, you can run `(main)` over and over to generate new sentences without having to restart the program.)
+Currently there is no stable version of this package, and thus breakage is to be expected. To install it anyway, go to `File→Package Manager→Do What I Mean` in DrRacket and paste the following into the `Package Source` field:
+
+    https://github.com/HeladoDeBrownie/jen.git#Unstable
+
+Alternatively, run the following from command line:
+
+    raco pkg install https://github.com/HeladoDeBrownie/jen.git#Unstable
+
+# Documentation
+
+Documentation is provided in the form of Scribble documents, which will be built automatically upon successful install and can then be found from `Help→Racket Documentation` in DrRacket. (The documentation is currently incomplete, but still potentially useful.)
+
+# Samples
+
+Once jen is installed, you can run the programs in the `samples/` subdirectory of this repository. Try modifying `samples/cat-sentences.rkt` and add your own phrases to it!
