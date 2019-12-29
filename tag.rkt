@@ -14,19 +14,19 @@
    (toggle-on (any/c ... . -> . void)))
   once)
 
-(define rule-state-flags (make-rule-state-parameter (set)))
+(define current-flags (make-rule-parameter (set)))
 
 (define (on . flags)
-  (rule-state-flags (set-union (rule-state-flags) (list->set flags))))
+  (current-flags (set-union (current-flags) (list->set flags))))
 
 (define (off . flags)
-  (rule-state-flags (set-subtract (rule-state-flags) (list->set flags))))
+  (current-flags (set-subtract (current-flags) (list->set flags))))
 
 (define (on? . flags)
-  (subset? (list->set flags) (rule-state-flags)))
+  (subset? (list->set flags) (current-flags)))
 
 (define (off? . flags)
-  (set-empty? (set-intersect (rule-state-flags) (list->set flags))))
+  (set-empty? (set-intersect (current-flags) (list->set flags))))
 
 (define (need . flags)
   (unless (apply on? flags)

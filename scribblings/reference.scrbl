@@ -71,9 +71,12 @@
 
 @racketresult["It backtracked!"]
 
-@defproc[(make-rule-state-parameter (initial-value any/c #f)) parameter?]{
- Makes a backtracking parameter. I.e., whenever a clause sets a parameter
- produced by this procedure and subsequently backtracks, the change is undone.
+@defproc[(make-rule-parameter (initial-value any/c #f)) parameter?]{
+ Makes a @emph{rule parameter}, which, whenever a clause backtracks, reverts its
+ value to whatever it was just before the clause was tried.
+
+ This is useful for tagging rules with additional state, and in fact is used by
+ @racketmodname[jen/tag].
 }
 
 @section{Rule Syntax}

@@ -10,7 +10,7 @@
    (struct exn:backtrack
      ((message string?)
       (continuation-marks continuation-mark-set?)))
-   (make-rule-state-parameter (() (any/c) . ->* . parameter?))))
+   (make-rule-parameter (() (any/c) . ->* . parameter?))))
 
 #| Provided Definitions |#
 
@@ -44,7 +44,7 @@
 
 (struct exn:backtrack exn ())
 
-(define (make-rule-state-parameter (initial-value #f))
+(define (make-rule-parameter (initial-value #f))
   (define key (gensym))
   (define (guard new-value) (hash-set (rule-state) key new-value))
   (define (wrap actual-value) (hash-ref actual-value key initial-value))
