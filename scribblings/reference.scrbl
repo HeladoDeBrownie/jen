@@ -76,7 +76,7 @@
  value to whatever it was just before the clause was tried.
 
  This is useful for tagging rules with additional state, and in fact is used by
- @racketmodname[jen/tag].
+ @racketmodname[jen/flags].
 }
 
 @section{Rule Syntax}
@@ -112,11 +112,11 @@
  like @racket[thunk] but slightly more specialized.
 
  The @racket[void?]-filtering behavior is particularly useful alongside
- @racketmodname[jen/tag], which contains many procedures that affect clause
+ @racketmodname[jen/flags], which contains many procedures that affect clause
  evaluation and return @racket[(void)]. If this turns out to be undesirable,
  it's still possible to use @racket[thunk] with @racket[define-rule].
 }
 
-@section{Tagging State}
+@section{Rule Flags}
 
-@defmodule[jen/tag]{TODO}
+@defmodule[jen/flags]{TODO}
