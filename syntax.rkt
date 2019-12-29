@@ -5,6 +5,8 @@
 (provide
   rule
   define-rule
+  simple-rule
+  define-simple-rule
   ~>
   define-clause-syntax/combiner)
 
@@ -20,6 +22,14 @@
 (define-syntax-rule
   (define-rule id rest ...)
   (define id (rule rest ...)))
+
+(define-syntax-rule
+  (simple-rule expr ...)
+  (rule (thunk expr) ...))
+
+(define-syntax-rule
+  (define-simple-rule id rest ...)
+  (define id (simple-rule rest ...)))
 
 (define-syntax ~>
   (syntax-parser
