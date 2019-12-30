@@ -13,7 +13,7 @@
 (define-syntax rule
   (syntax-parser
     ((_
-      (~seq a-clause
+      (~seq a-clause:expr
             (~optional (~seq #:weight weight:expr)
                        #:defaults ((weight #'1))))
       ...)
