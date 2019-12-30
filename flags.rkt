@@ -44,7 +44,7 @@
   (apply need-not flags)
   (apply on flags))
 
-(define-syntax (once a-syntax)
-  (syntax-parse a-syntax
+(define-syntax once
+  (syntax-parser
     ((_)
-     #`(toggle-on '#,(gensym)))))
+     #`(toggle-on '#,(string->uninterned-symbol "once")))))
