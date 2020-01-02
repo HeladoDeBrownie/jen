@@ -12,8 +12,8 @@
   (~> (fur-length) (maybe-fur-color)))
 
 (define-rule maybe-fur-color
-  (~> (need 'fur) " " (fur-color))
-  (~> (need-not 'fur)))
+  (~> (need (on? 'fur)) " " (fur-color))
+  (~> (need (off? 'fur))))
 
 (define-rule fur-length
   (~> "a short-haired") #:weight 10

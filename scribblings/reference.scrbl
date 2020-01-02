@@ -8,7 +8,7 @@
  @racketmodname[jen] reprovides all of the modules in this package.
 }
 
-@section{Rule Semantics}
+@section{Semantics}
 
 @defmodule[jen/base]{
  @racketmodname[jen/base] provides the low-level semantics and tools for working
@@ -79,7 +79,7 @@
  @racketmodname[jen/flags].
 }
 
-@section{Rule Syntax}
+@section{Syntax}
 
 @defmodule[jen/syntax]{
  @racket[jen/syntax] provides clean syntax on top of the rule primitives to make
@@ -118,6 +118,18 @@
  it's still possible to use @racket[thunk] with @racket[define-rule].
 }
 
-@section{Rule Flags}
+@section{Preconditions}
+
+@defmodule[jen/preconditions]{
+ @racket[jen/preconditions] provides support for clause preconditions, by which
+ a clause can decide not to execute if its conditions aren't met.
+}
+
+@defproc[(need (condition any/c)) void?]{
+ Returns a @racket[void?] value when @racket[condition] is true; otherwise
+ signals a backtrack by calling @racket[(backtrack)].
+}
+
+@section{Flags}
 
 @defmodule[jen/flags]{TODO}

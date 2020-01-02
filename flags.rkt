@@ -1,15 +1,14 @@
 #lang racket
 (require
   (for-syntax syntax/parse)
-  "base.rkt")
+  "base.rkt"
+  "preconditions.rkt")
 (provide
   (contract-out
    (on (any/c ... . -> . void))
    (off (any/c ... . -> . void))
    (on? (any/c ... . -> . boolean?))
    (off? (any/c ... . -> . boolean?))
-   (need (any/c ... . -> . void))
-   (need-not (any/c ... . -> . void))
    (toggle-off (any/c ... . -> . void))
    (toggle-on (any/c ... . -> . void)))
   once)
@@ -28,20 +27,12 @@
 (define (off? . flags)
   (set-empty? (set-intersect (current-flags) (list->set flags))))
 
-(define (need . flags)
-  (unless (apply on? flags)
-    (backtrack)))
-
-(define (need-not . flags)
-  (unless (apply off? flags)
-    (backtrack)))
-
 (define (toggle-off . flags)
-  (apply need flags)
+  (need (apply on? flags))
   (apply off flags))
 
 (define (toggle-on . flags)
-  (apply need-not flags)
+  (need (apply off? flags))
   (apply on flags))
 
 (define-syntax once
