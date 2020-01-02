@@ -2,9 +2,11 @@
 #lang racket
 (require jen)
 
+(define fur (make-rule-parameter #t))
+(define kitten (make-rule-parameter #f))
+
 (define-rule start
-  (~> (on 'fur)
-      "You spy " (fur-description) " " (cat) " with " (eye-color) " eyes. "
+  (~> "You spy " (fur-description) " " (cat) " with " (eye-color) " eyes. "
       "It's playing with " (a-toy) ". When it sees you, " (it-does-something)
       "." (whose-cat-is-this)))
 
@@ -12,14 +14,14 @@
   (~> (fur-length) (maybe-fur-color)))
 
 (define-rule maybe-fur-color
-  (~> (need (on? 'fur)) " " (fur-color))
-  (~> (need (off? 'fur))))
+  (~> (need (fur)) " " (fur-color))
+  (~> (need (not (fur)))))
 
 (define-rule fur-length
   (~> "a short-haired") #:weight 10
   (~> "a long-haired") #:weight 9
   (~> "a mangey") #:weight 2
-  (~> (off 'fur) "a furless") #:weight 1)
+  (~> (fur #f) "a furless") #:weight 1)
 
 (define-rule fur-color
   (~> "orange")
@@ -31,7 +33,7 @@
 (define-rule cat
   (~> "cat") #:weight 10
   (~> "kitty") #:weight 10
-  (~> (on 'kitten) "kitten") #:weight 5
+  (~> (kitten #t) "kitten") #:weight 5
   (~> "creature") #:weight 2
   (~> "goblin") #:weight 2
   (~> "gremlin") #:weight 2
@@ -53,17 +55,17 @@
   (~> "a wet clump of hair"))
 
 (define-rule it-does-something
-  (~> "it scales your leg with its claws")
-  (~> "it " (meows) " " (at-you))
-  (~> "it rubs up against your leg")
+  #;(~> "it scales your leg with its claws")
+  #;(~> "it " (meows) " " (at-you))
+  #;(~> "it rubs up against your leg")
   (~> "it rears up to pet itself with your hand" (maybe-falls-over))
-  (~> "it wails at you in a language lost to time")
-  (~> "it gets its claws caught in the carpet and falls over")
-  (~> "it leaps five feet into the air and scrabbles away in a panic"))
+  #;(~> "it wails at you in a language lost to time")
+  #;(~> "it gets its claws caught in the carpet and falls over")
+  #;(~> "it leaps five feet into the air and scrabbles away in a panic"))
 
 (define-rule maybe-falls-over
-  (~>) #:weight (if (on? 'kitten) 1 9)
-  (~> ", but falls over instead") #:weight (if (on? 'kitten) 9 1))
+  (~>) #:weight (if (kitten) 1 9)
+  (~> ", but falls over instead") #:weight (if (kitten) 9 1))
 
 (define-rule meows
   (~> "meows piteously")
