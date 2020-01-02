@@ -75,8 +75,8 @@
  Makes a @emph{rule parameter}, which, whenever a clause backtracks, reverts its
  value to whatever it was just before the clause was tried.
 
- This is useful for tagging rules with additional state, and in fact is used by
- @racketmodname[jen/flags].
+ This is useful for tagging rules with additional state that needs to remain
+ consistent with respect to clauses being tried but failing.
 }
 
 @section{Syntax}
@@ -113,9 +113,10 @@
  like @racket[thunk] but slightly more specialized.
 
  The @racket[void?]-filtering behavior is particularly useful alongside
- @racketmodname[jen/flags], which contains many procedures that affect clause
- evaluation and return @racket[(void)]. If this turns out to be undesirable,
- it's still possible to use @racket[thunk] with @racket[define-rule].
+ @racketmodname[jen/preconditions], which contains procedures and forms that
+ affect clause evaluation and return @racket[(void)]. If this turns out to be
+ undesirable for a given use case, it's still possible to use @racket[thunk]
+ with @racket[define-rule].
 }
 
 @section{Preconditions}
@@ -130,6 +131,21 @@
  signals a backtrack by calling @racket[(backtrack)].
 }
 
-@section{Flags}
+@defform[(once)]{
+ Shorthand for @racket[(n-times 1)].
+}
 
-@defmodule[jen/flags]{TODO}
+@defform[(n-times n)
+         #:contracts ((n natural?))]{
+ During the current top-level rule evaluation, if the clause containing the call
+ site of this form has previously been committed to less than @racket[n] times,
+ the form evaluates to a @racket[void?] value. Subsequent evaluations signal a
+ backtrack (see @racket[backtrack]).
+
+ The upshot of this is that the clause containing the call to this macro can be
+ allowed to be committed to at most @racket[n] times before it always fails.
+
+ Underlyingly, each call site of this macro uses its own @emph{rule parameter}
+ (see @racket[make-rule-parameter]) as a counter of how many times it's been
+ reached (and its clause committed to).
+}
