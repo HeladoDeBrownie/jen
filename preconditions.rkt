@@ -7,9 +7,12 @@
          once
          n-times)
 
-(define (need condition)
+(define (need condition (message #f))
   (unless condition
-    (backtrack)))
+    (backtrack
+     (if message
+         message
+         "precondition failed"))))
 
 (define-syntax-rule
   (once)
@@ -22,4 +25,6 @@
           (syntax-local-lift-expression #'(make-rule-parameter 0))))
      #`(begin
          (#,current-count (add1 (#,current-count)))
-         (need (<= (#,current-count) n.c))))))
+         (need
+          (<= (#,current-count) n.c)
+          (~a "exceeded maximum number of times committed (" n ")"))))))

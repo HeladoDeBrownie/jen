@@ -52,8 +52,11 @@
  in general.)
 }
 
-@defproc[(backtrack) none/c]{
+@defproc[(backtrack (message string? #f)) none/c]{
  Signals a backtrack by raising an @racket[exn:backtrack] value.
+
+ If @racket[message] is provided, it will be used to provide a more descriptive
+ error message for debugging purposes.
 }
 
 @defstruct*[(exn:backtrack exn) ()]{
