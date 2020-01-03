@@ -6,7 +6,7 @@
    (evaluate-rule (rule-struct? #:default any/c . -> . any/c))
    (struct rule-struct
      ((clauses (hash/c (-> any/c) (-> exact-nonnegative-integer?)))))
-   (backtrack (-> none/c))
+   (backtrack (() (string?) . ->* . none/c))
    (struct exn:backtrack
      ((message string?)
       (continuation-marks continuation-mark-set?)))
@@ -20,7 +20,7 @@
       (cond
         ((weighted-set-empty? untried-clauses)
          (when (default-value . equal? . default-sentinel)
-           (backtrack))
+           (backtrack "all clauses failed"))
          default-value)
         (else
          (define-values (clause-to-try untried-clauses_)
@@ -39,8 +39,12 @@
 (struct rule-struct (clauses)
   #:property prop:procedure evaluate-rule)
 
-(define (backtrack)
-  (raise (exn:backtrack "backtrack" (current-continuation-marks))))
+(define (backtrack (message #f))
+  (raise (exn:backtrack
+          (if message
+              (string-append "backtrack: " message)
+              "backtrack")
+          (current-continuation-marks))))
 
 (struct exn:backtrack exn ())
 
