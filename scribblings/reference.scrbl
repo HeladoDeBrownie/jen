@@ -105,6 +105,18 @@
  Shorthand for @racket[(define id (rule rest ...))].
 }
 
+@defform[(simple-rule expr ...)]{
+ Shorthand for @racket[(rule (thunk expr) ...)].
+
+ This is useful when each of your clauses only needs to be a single expression
+ without complex logic, allowing you to omit @racket[~>] or other
+ procedure-producing forms.
+}
+
+@defform[(define-simple-rule id rest ...)]{
+ Shorthand for @racket[(define id (simple-rule rest ...))].
+}
+
 @defform[(~> expr ... maybe-combiner)
          #:grammar
          ((maybe-combiner (code:line)
@@ -142,8 +154,8 @@
          #:contracts ((n natural?))]{
  During the current top-level rule evaluation, if the clause containing the call
  site of this form has previously been committed to less than @racket[n] times,
- the form evaluates to a @racket[void?] value. Subsequent evaluations signal a
- backtrack (see @racket[backtrack]).
+ the form evaluates to a @racket[void?] value. Otherwise, it signals a backtrack
+ (see @racket[backtrack]).
 
  The upshot of this is that the clause containing the call to this macro can be
  allowed to be committed to at most @racket[n] times before it always fails.
