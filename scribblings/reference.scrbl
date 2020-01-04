@@ -164,3 +164,18 @@
  (see @racket[make-rule-parameter]) as a counter of how many times it's been
  reached (and its clause committed to).
 }
+
+@section{Sequences}
+
+@defmodule[jen/sequential]{
+ @racket[jen/sequential] contains forms for non-random, ordered evaluation that
+ nonetheless depends on the current rule state.
+}
+
+@defform[(cycle expr ...+)]{
+ Cycles through the @racket[expr]s, returning the value of one each time this
+ form is evaluated as part of a clause. If the clause has never been committed
+ to before, the expression will be the first one; if it has been committed to
+ once, it will be the second one; and so on. Once all expressions have been
+ exhausted, it begins anew with the first one.
+}
