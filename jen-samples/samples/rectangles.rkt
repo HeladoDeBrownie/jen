@@ -2,6 +2,7 @@
 (require
   jen
   pict)
+(provide (all-defined-out))
 
 (define-rule start
   (~>
@@ -30,5 +31,8 @@
   (thunk 20) #:weight 3
   (thunk 10))
 
-(module+ main
+(define (main)
   (start))
+
+(module+ main
+  (main))

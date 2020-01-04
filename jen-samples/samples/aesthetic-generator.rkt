@@ -2,9 +2,10 @@
    Ported from https://helado.itch.io/aesthetic-generator
 
    Content warning: This program may generate phrases suggestive of violence or
-   of sexual contact. |#
+   of sexual activity. |#
 #lang racket
 (require jen)
+(provide (all-defined-out))
 
 (define-rule origin
   (~> (affixed-phrase)) #:weight 2
