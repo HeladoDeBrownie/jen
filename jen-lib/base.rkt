@@ -50,8 +50,17 @@
 
 (define (make-rule-parameter (initial-value #f))
   (define key (gensym))
-  (define (guard new-value) (hash-set (rule-state) key new-value))
-  (define (wrap actual-value) (hash-ref actual-value key initial-value))
+
+  (define (guard new-value)
+    (if (rule-state)
+        (hash-set (rule-state) key new-value)
+        (raise-outside-rule-error)))
+
+  (define (wrap actual-value)
+    (if actual-value
+        (hash-ref actual-value key initial-value)
+        (raise-outside-rule-error)))
+
   (make-derived-parameter rule-state guard wrap))
 
 #| Internal Definitions |#
@@ -68,3 +77,8 @@
   (weighted-set
    (for/hash (((thunk weight-thunk) (in-hash (rule-struct-clauses a-rule))))
      (values thunk (weight-thunk)))))
+
+(define (raise-outside-rule-error)
+  (raise (exn:fail:contract
+          "rule parameter cannot be used outside of rule"
+          (current-continuation-marks))))
