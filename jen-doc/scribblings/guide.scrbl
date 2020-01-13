@@ -1,84 +1,44 @@
 #lang scribble/manual
-@require[(for-label racket)
-         (for-label jen)]
+@require[(for-label racket
+                    jen)]
 
 @title{The jen Guide}
 
-TODO
+jen is a tool for procedurally generating text and other things. TODO
 
-One of the simplest jen programs that produces output is:
+This guide is aimed at people with relatively little experience in Racket. It's
+intended that you try the code in DrRacket as it comes up in the text.
 
-@racketblock[(require jen)
+@section{Rules}
 
-             (define-rule start
-               (~> "hello friend :3"))
-
-             (start)]
-
-This always gives @racketresult["hello friend :3"]. But jen is designed to give
-@emph{random} results, so it's more interesting to try rules with multiple
-alternatives:
-
-@racketblock[(require jen)
-
-             (define-rule start
-               (~> "hello friend :3")
-               (~> "greetings friend :3"))
-
-             (start)]
-
-Now when you run the program, you'll get either @racketresult["hello friend :3"]
-or @racketresult["greetings friend :3"], randomly. Try running it multiple times
-to see, or, if you're using an interactive evaluator such as DrRacket, run just
-@racket[(start)] over and over.
-
-Some of the text in this rule is fixed, meaning it's the same for all (both)
-alternatives. We can avoid writing it more than once by factoring out part of
-this rule into a second rule:
-
-@racketblock[(require jen)
-
-             (define-rule start
-               (~> (greeting) " friend :3"))
-
-             (define-rule greeting
-               (~> "hello")
-               (~> "greetings"))
-
-             (start)]
+A @emph{rule} is a value representing a way to generate something, which is the
+central concept in jen. Rules can be defined and applied like so:
 
 @margin-note{
- There's nothing special about the names of rules. @racketid[greeting] is just
- as much a rule as @racketid[start] is. The only difference is we apply
- @racket[(start)] directly and not @racket[(greeting)]. Try applying
- @racket[(greeting)] yourself and see if it works as you expect.
+ The examples in this guide all begin the same way:
+
+ @codeblock{
+  #lang racket
+  (require jen)
+ }
+
+ This tells Racket that we're using the standard Racket language and importing
+ the jen library. Since this text is necessary for all the examples, it's
+ included so you don't need to remember to keep it in.
 }
 
-We can even generalize this further and get multiple independently random parts:
+@codeblock{
+ #lang racket
+ (require jen)
 
-@racketblock[(require jen)
+ (define-simple-rule color
+   "red"
+   "blue")
 
-             (define-rule start
-               (~> (greeting) " " (friend) " :3"))
-
-             (define-rule greeting
-               (~> "hello")
-               (~> "greetings"))
-
-             (define-rule friend
-               (~> "friend")
-               (~> "amigx"))
-
-             (start)]
-
-Now, there are @emph{four} possible results, one for every combination of the
-two choices that can be made for each of the two independent rules,
-@racketid[greeting] and @racketid[friend]. Try running @racket[(start)] until
-you see them all.
-
-@margin-note{
- Try adding more possibilities to @racketid[greeting] and @racketid[friend]
- yourself, or factoring @racket[":3"] out and adding more possible emotes.
+ (color)
 }
 
-TODO
+When you run this program, you should see either @racket{red} or @racket{blue}
+in the interactions pane. (Try running the program again until you've seen
+both. You can also enter @racket[(color)] into the interactions pane instead of
+running the whole program again.)
