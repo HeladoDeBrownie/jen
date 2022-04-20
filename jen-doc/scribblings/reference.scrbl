@@ -16,7 +16,7 @@
 }
 
 @defstruct*[rule-struct
-            ((clauses (hash/c (-> any/c) (-> exact-nonnegative-integer?))))]{
+            ((clauses (hash/c (-> any/c) (-> weight?))))]{
  The @racket[rule-struct] structure represents procedural generation rules, the
  central concept of this library.
 
@@ -24,10 +24,16 @@
  randomly chosen. The key is the @emph{try thunk}, a nullary procedure that's
  applied when the clause is chosen; and the value is the @emph{weight thunk},
  also a nullary procedure, one that's applied to determine the clause's
- likelihood of being chosen.
+ likelihood of being chosen (see @racket[weight?]).
 
  Applying a @racket[rule-struct] value is the same as applying
  @racket[evaluate-rule] to it.
+}
+
+@defproc[(weight? (a-value any/c)) boolean?]{
+ Recognizes weights, which are numbers used to describe the relative likelihood
+ of a clause being selected. A weight is @racket[rational?] (including
+ integers), non-@racket[negative?], and @racket[exact?].
 }
 
 @defproc[(evaluate-rule (a-rule-struct rule-struct?)

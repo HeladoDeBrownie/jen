@@ -1,25 +1,31 @@
 #lang racket
 (require
   racket/random)
-(provide (contract-out
-          (weighted-set
-           (->
-            (hash/c any/c exact-nonnegative-integer?)
-            weighted-set/c))
-          (weighted-set/c contract?)
-          (weighted-set-empty? (weighted-set/c . -> . boolean?))
-          (weighted-set-total-weight
-           (weighted-set/c . -> . exact-nonnegative-integer?))
-          (weighted-set-remove-random
-           (weighted-set/c . -> . (values any/c weighted-set/c)))))
+(provide
+  (contract-out
+   (weighted-set
+    (->
+     (hash/c any/c weight?)
+     weighted-set/c))
+   (weight? flat-contract?)
+   (weighted-set/c contract?)
+   (weighted-set-empty? (weighted-set/c . -> . boolean?))
+   (weighted-set-total-weight
+    (weighted-set/c . -> . weight?))
+   (weighted-set-remove-random
+    (weighted-set/c . -> . (values any/c weighted-set/c)))))
 
 (define (weighted-set a-hash)
+  (define divisor (apply gcd (hash-values a-hash)))
   (for/hash (((value weight) (in-hash a-hash))
              #:unless (weight . = . 0))
-    (values value weight)))
+    (values value (/ weight divisor))))
+
+(define weight?
+  (conjoin rational? (negate negative?) exact?))
 
 (define weighted-set/c
-  (hash/c (-> any/c) exact-nonnegative-integer? #:immutable #t))
+  (hash/c (-> any/c) weight? #:immutable #t))
 
 (define weighted-set-empty? hash-empty?)
 

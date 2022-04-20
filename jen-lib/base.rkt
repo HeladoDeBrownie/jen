@@ -5,12 +5,13 @@
   (contract-out
    (evaluate-rule (rule-struct? #:default any/c . -> . any/c))
    (struct rule-struct
-     ((clauses (hash/c (-> any/c) (-> exact-nonnegative-integer?)))))
+     ((clauses (hash/c (-> any/c) (-> weight?)))))
    (backtrack (() (string?) . ->* . none/c))
    (struct exn:backtrack
      ((message string?)
       (continuation-marks continuation-mark-set?)))
-   (make-rule-parameter (() (any/c) . ->* . parameter?))))
+   (make-rule-parameter (() (any/c) . ->* . parameter?))
+   (weight? flat-contract?)))
 
 #| Provided Definitions |#
 
