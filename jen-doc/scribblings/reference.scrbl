@@ -185,3 +185,8 @@
  once, it will be the second one; and so on. Once all expressions have been
  exhausted, it begins anew with the first one.
 }
+
+@defform[(cycle/repeat-last expr ...+)]{
+ Like @racket[cycle], but once all expressions have been exhausted, it repeats
+ the last one.
+}
