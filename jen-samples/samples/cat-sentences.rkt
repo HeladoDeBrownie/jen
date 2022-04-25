@@ -56,13 +56,13 @@
   (~> "a wet clump of hair"))
 
 (define-rule it-does-something
-  #;(~> "it scales your leg with its claws")
-  #;(~> "it " (meows) " " (at-you))
-  #;(~> "it rubs up against your leg")
+  (~> "it scales your leg with its claws")
+  (~> "it " (meows) " " (at-you))
+  (~> "it rubs up against your leg")
   (~> "it rears up to pet itself with your hand" (maybe-falls-over))
-  #;(~> "it wails at you in a language lost to time")
-  #;(~> "it gets its claws caught in the carpet and falls over")
-  #;(~> "it leaps five feet into the air and scrabbles away in a panic"))
+  (~> "it wails at you in a language lost to time")
+  (~> "it gets its claws caught in the carpet and falls over")
+  (~> "it leaps five feet into the air and scrabbles away in a panic"))
 
 (define-rule maybe-falls-over
   (~>) #:weight (if (kitten) 1 9)
