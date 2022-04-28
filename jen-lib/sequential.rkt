@@ -1,17 +1,18 @@
 #lang racket
+(provide
+ cycle
+ cycle/repeat-last)
+
 (require
   syntax/parse/define
   "base.rkt")
-(provide
-  cycle
-  cycle/repeat-last)
 
 (define-syntax-parser cycle
   ((_ e:expr ...+)
-   (let ((current-count
-          (syntax-local-lift-expression #'(make-rule-parameter 0)))
-         (thunks
-          (syntax-local-lift-expression #'(list (thunk e) ...))))
+   (let ([current-count
+          (syntax-local-lift-expression #'(make-rule-parameter 0))]
+         [thunks
+          (syntax-local-lift-expression #'(list (thunk e) ...))])
      #`(begin0
          ((list-ref #,thunks (#,current-count)))
          (#,current-count
@@ -19,10 +20,10 @@
 
 (define-syntax-parser cycle/repeat-last
   ((_ e:expr ...+)
-   (let ((current-count
-          (syntax-local-lift-expression #'(make-rule-parameter 0)))
-         (thunks
-          (syntax-local-lift-expression #'(list (thunk e) ...))))
+   (let ([current-count
+          (syntax-local-lift-expression #'(make-rule-parameter 0))]
+         [thunks
+          (syntax-local-lift-expression #'(list (thunk e) ...))])
      #`(begin0
          ((list-ref #,thunks (#,current-count)))
          (#,current-count

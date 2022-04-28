@@ -1,11 +1,13 @@
 #lang racket
+(provide
+ (contract-out
+  (need (-> any/c void?)))
+ n-times
+ once)
+
 (require
   syntax/parse/define
   "base.rkt")
-(provide (contract-out
-          (need (any/c . -> . void?)))
-         once
-         n-times)
 
 (define (need condition (message #f))
   (unless condition
@@ -13,10 +15,6 @@
      (if message
          message
          "precondition failed"))))
-
-(define-syntax-rule
-  (once)
-  (n-times 1))
 
 (define-syntax-parser n-times
   ((_ n)
@@ -28,3 +26,6 @@
          (need
           (<= (#,current-count) n.c)
           (~a "exceeded maximum number of times committed (" n ")"))))))
+
+(define-syntax-rule (once)
+  (n-times 1))

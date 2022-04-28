@@ -1,7 +1,8 @@
 ; by helado de brownie and Crossroads Wanderer
 #lang racket
-(require jen)
 (provide (all-defined-out))
+
+(require jen)
 
 (define fur (make-rule-parameter #t))
 (define kitten (make-rule-parameter #f))
