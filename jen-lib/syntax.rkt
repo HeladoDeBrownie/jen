@@ -17,7 +17,7 @@
           (~optional (~seq #:weight weight:expr)
                      #:defaults ((weight #'1))))
     ...)
-   #'(rule-struct (hash (~@ a-clause (λ () weight)) ...))))
+   #'(rule-struct (list (cons (~@ a-clause (λ () weight))) ...))))
 
 (define-syntax-rule (define-rule id rest ...)
   (define id

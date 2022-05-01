@@ -16,18 +16,18 @@
 }
 
 @defstruct*[rule-struct
-            ((clauses (hash/c (-> any/c) (-> weight?))))]{
+            ((clauses (listof (cons/c (-> any/c) (-> weight?)))))]{
  The @racket[rule-struct] structure represents procedural generation rules, the
  central concept of this library.
 
- @racket[clauses] is a hash where each mapping represents a clause that may be
- randomly chosen. The key is the @emph{try thunk}, a nullary procedure that's
- applied when the clause is chosen; and the value is the @emph{weight thunk},
- also a nullary procedure, one that's applied to determine the clause's
- likelihood of being chosen (see @racket[weight?]).
+ @racket[clauses] is an association list where each pair represents a clause
+ that may be randomly selected. The key is the @emph{try thunk}, a nullary
+ procedure that's applied when the clause is selected; and the value is the
+ @emph{weight thunk}, also a nullary procedure, which is applied to determine
+ the clause's likelihood of being selected (see @racket[weight?]).
 
  Applying a @racket[rule-struct] value is the same as applying
- @racket[evaluate-rule] to it.
+ @racket[rule-evaluate] to it.
 }
 
 @defproc[(weight? (a-value any/c)) boolean?]{
@@ -36,7 +36,7 @@
  integers), non-@racket[negative?], and @racket[exact?].
 }
 
-@defproc[(evaluate-rule (a-rule-struct rule-struct?)
+@defproc[(rule-evaluate (a-rule-struct rule-struct?)
                         (#:default default-value any/c
                          #,(emph "an opaque value"))) any/c]{
  Evaluates a rule as follows:
@@ -44,7 +44,7 @@
  The rule's clauses' weight thunks are all evaluated, then try thunks are
  evaluated at random, weighted by their corresponding computed weight, until one
  of them succeeds, i.e., doesn't backtrack. (See @racket[backtrack] and
- @racket[exn:backtrack].) If a clause succeeds, @racket[evaluate-rule] returns
+ @racket[exn:backtrack].) If a clause succeeds, @racket[rule-evaluate] returns
  the result of its try thunk. If @emph{no} clause succeeds, then the entire rule
  backtracks.
 
@@ -68,7 +68,7 @@
 @defstruct*[(exn:backtrack exn) ()]{
  @racket[exn:backtrack] represents the backtrack signal.
 
- Although usually unnecessary (see @racket[evaluate-rule]), it's possible to
+ Although usually unnecessary (see @racket[rule-evaluate]), it's possible to
  catch a backtrack manually by installing an @racket[exn:backtrack?] handler.
  For example:
 
@@ -76,9 +76,9 @@
               
               (with-handlers ((exn:backtrack? (const "It backtracked!")))
                 (start))]
-}
 
-@racketresult["It backtracked!"]
+ @racketresult["It backtracked!"]
+}
 
 @defproc[(make-rule-parameter (initial-value any/c #f)) parameter?]{
  Makes a @emph{rule parameter}, which, whenever a clause backtracks, reverts its

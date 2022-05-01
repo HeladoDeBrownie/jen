@@ -1,50 +1,58 @@
 #lang racket
 (provide
  (contract-out
-  (evaluate-rule (-> rule-struct? #:default any/c any/c))
   (struct rule-struct
-    ((clauses (hash/c (-> any/c) (-> weight?)))))
+    ((clauses (listof (cons/c (-> any/c) (-> weight?))))))
+  (weight? predicate/c)
+  (rule-evaluate (-> rule-struct? #:default any/c any/c))
   (backtrack (->* () (string?) none/c))
   (struct exn:backtrack
     ((message string?)
      (continuation-marks continuation-mark-set?)))
-  (make-rule-parameter (->* () (any/c) parameter?))
-  (weight? predicate/c)))
+  (make-rule-parameter (->* () (any/c) parameter?))))
 
-(require
-  "private/weighted-set.rkt")
+(define weight?
+  (and/c rational? (not/c negative?) exact?))
 
-#| Provided Definitions |#
-
-(define (evaluate-rule a-rule-struct #:default (default-value not-specified))
-  (define (go)
-    (let try-next ([untried-clauses (rule->weighted-set a-rule-struct)])
-      (cond
-        [(weighted-set-empty? untried-clauses)
-         (when (equal? default-value not-specified)
-           (backtrack "all clauses failed"))
-         default-value]
-        [else
-         (define-values (clause-to-try untried-clauses_)
-           (weighted-set-remove-random untried-clauses))
-         (with-handlers ([exn:backtrack? (λ (_) (try-next untried-clauses_))])
-           (define-values (result new-state)
-             (parameterize ([rule-state (rule-state)])
-               (values (clause-to-try) (rule-state))))
-           (rule-state new-state)
-           result)])))
+(define (rule-evaluate a-rule-struct #:default (default-value not-specified))
+  ; Try clauses at random until one succeeds (i.e., doesn't backtrack) or there
+  ; are none left.
+  (define (try-next (remaining-clauses
+                     (evaluate-weights (rule-struct-clauses a-rule-struct))))
+    (cond
+      ; There are no clauses left.
+      [(empty? remaining-clauses)
+       (if (equal? default-value not-specified)
+           (backtrack "all clauses failed")
+           default-value)]
+      ; There is at least one clause left.
+      [else
+       (define-values (selected-clause remaining-clauses_)
+         (select-clause remaining-clauses))
+       (with-handlers*
+           ; If this clause backtracks, try another.
+           ([exn:backtrack? (thunk* (try-next remaining-clauses_))])
+         (define-values (result new-rule-state)
+           (parameterize ([rule-state (rule-state)])
+             ; Try the clause.
+             (values (selected-clause) (rule-state))))
+         ; The clause succeeded; propagate the new rule state and return.
+         (rule-state new-rule-state)
+         result)]))
+  ; Install a fresh rule state if there isn't one already. This normally
+  ; happens when a rule is evaluated outside of any other rule.
   (if (rule-state)
-      (go)
+      (try-next)
       (parameterize ([rule-state #hash()])
-        (go))))
+        (try-next))))
 
 (struct rule-struct (clauses)
-  #:property prop:procedure evaluate-rule)
+  #:property prop:procedure rule-evaluate)
 
 (define (backtrack (message #f))
   (raise (exn:backtrack
           (if message
-              (string-append "backtrack: " message)
+              (string-append-immutable "backtrack: " message)
               "backtrack")
           (current-continuation-marks))))
 
@@ -62,20 +70,35 @@
         (raise-outside-rule-error)))
   (make-derived-parameter rule-state guard wrap))
 
-#| Internal Definitions |#
+#| Private Definitions |#
+
+; A sentinel used to determine whether rule-evaluate was given a default value.
+(define not-specified (string->uninterned-symbol "not specified"))
+
+; Turn the weight thunks of the given clauses into natural numbers by
+; evaluating them and multiplying them all by the same amount.
+(define (evaluate-weights clauses)
+  (define (map-cdrs f a-dict)
+    (dict-map a-dict (λ (key value) (cons key (f value)))))
+  (define unnormalized-clauses
+    (map-cdrs (λ (weight-thunk) (weight-thunk)) clauses))
+  (define divisor
+    (apply gcd (dict-values unnormalized-clauses)))
+  (map-cdrs (λ (x) (/ x divisor)) unnormalized-clauses))
+
+(define (select-clause clauses)
+  (define total-weight (apply + (dict-values clauses)))
+  (define target-weight (random 0 total-weight))
+  (let loop
+    ([remaining-clauses clauses]
+     (sum-so-far 0))
+    (match-define (cons try-thunk weight) (first remaining-clauses))
+    (define new-sum-so-far (+ sum-so-far weight))
+    (if (> new-sum-so-far target-weight)
+        (values try-thunk (dict-remove clauses try-thunk))
+        (loop (rest remaining-clauses) new-sum-so-far))))
 
 (define rule-state (make-parameter #f))
-
-; This is used by the rule procedure to detect that the user didn't supply a
-; default value.
-(define not-specified (gensym))
-
-; Produces a weighted set representing the given rule's clauses' weights at the
-; present moment.
-(define (rule->weighted-set a-rule)
-  (weighted-set
-   (for/hash ([(thunk weight-thunk) (in-hash (rule-struct-clauses a-rule))])
-     (values thunk (weight-thunk)))))
 
 (define (raise-outside-rule-error)
   (raise (exn:fail:contract
