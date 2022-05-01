@@ -11,8 +11,8 @@
 @section{Semantics}
 
 @defmodule[jen/base]{
- @racketmodname[jen/base] provides the low-level semantics and tools for working
- with rules and clauses.
+ @racketmodname[jen/base] provides the low-level semantics and tools for
+ working with rules and clauses.
 }
 
 @defstruct*[rule-struct
@@ -42,11 +42,11 @@
  Evaluates a rule as follows:
 
  The rule's clauses' weight thunks are all evaluated, then try thunks are
- evaluated at random, weighted by their corresponding computed weight, until one
- of them succeeds, i.e., doesn't backtrack. (See @racket[backtrack] and
+ evaluated at random, weighted by their corresponding computed weight, until
+ one of them succeeds, i.e., doesn't backtrack. (See @racket[backtrack] and
  @racket[exn:backtrack].) If a clause succeeds, @racket[rule-evaluate] returns
- the result of its try thunk. If @emph{no} clause succeeds, then the entire rule
- backtracks.
+ the result of its try thunk. If @emph{no} clause succeeds, then the entire
+ rule backtracks.
 
  The probability of a clause being chosen is its computed weight divided by the
  total of all clauses' computed weights.
@@ -81,8 +81,8 @@
 }
 
 @defproc[(make-rule-parameter (initial-value any/c #f)) parameter?]{
- Makes a @emph{rule parameter}, which, whenever a clause backtracks, reverts its
- value to whatever it was just before the clause was tried.
+ Makes a @emph{rule parameter}, which, whenever a clause backtracks, reverts
+ its value to whatever it was just before the clause was tried.
 
  This is useful for tagging rules with additional state that needs to remain
  consistent with respect to clauses being tried but failing.
@@ -91,8 +91,8 @@
 @section{Syntax}
 
 @defmodule[jen/syntax]{
- @racket[jen/syntax] provides clean syntax on top of the rule primitives to make
- it easier to work with them in common cases.
+ @racket[jen/syntax] provides clean syntax on top of the rule primitives to
+ make it easier to work with them in common cases.
 }
 
 @defform[(rule clause ...)
@@ -103,8 +103,9 @@
  Produces a rule whose clauses are given by @racket[clause]s.
 
  For each clause, @racket[proc-expr] is evaluated immediately to obtain the
- clause's try thunk, while @racket[weight-expr] (by default, @racket[1]) becomes
- the body of the weight thunk and thus is evaluated only when the rule is.
+ clause's try thunk, while @racket[weight-expr] (by default, @racket[1])
+ becomes the body of the weight thunk and thus is evaluated only when the rule
+ is.
 }
 
 @defform[(define-rule id rest ...)]{
@@ -158,10 +159,10 @@
 
 @defform[(n-times n)
          #:contracts ((n natural?))]{
- During the current top-level rule evaluation, if the clause containing the call
- site of this form has previously been committed to less than @racket[n] times,
- the form evaluates to a @racket[void?] value. Otherwise, it signals a backtrack
- (see @racket[backtrack]).
+ During the current top-level rule evaluation, if the clause containing the
+ call site of this form has previously been committed to less than @racket[n]
+ times, the form evaluates to a @racket[void?] value. Otherwise, it signals a
+ backtrack (see @racket[backtrack]).
 
  The upshot of this is that the clause containing the call to this macro can be
  allowed to be committed to at most @racket[n] times before it always fails.
