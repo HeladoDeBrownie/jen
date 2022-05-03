@@ -9,7 +9,10 @@
   (struct exn:backtrack
     ((message string?)
      (continuation-marks continuation-mark-set?)))
-  (make-rule-parameter (->* () (any/c) parameter?))))
+  (make-rule-parameter (->* () (any/c) parameter?))
+  (current-clause-selector (parameter/c clause-selector/c))
+  (default-clause-selector clause-selector/c)
+  (clause-selector/c contract?)))
 
 (define weight?
   (and/c rational? (not/c negative?) exact?))
@@ -70,6 +73,16 @@
         (raise-outside-rule-error)))
   (make-derived-parameter rule-state guard wrap))
 
+(define (default-clause-selector total-weight _)
+  (random 0 total-weight))
+
+(define current-clause-selector (make-parameter default-clause-selector))
+
+(define clause-selector/c
+  (->i ([total-weight natural?]
+        [_ (listof (cons/c (-> any/c) natural?))])
+       [_ (total-weight) (and/c natural? (</c total-weight))]))
+
 #| Private Definitions |#
 
 ; A sentinel used to determine whether rule-evaluate was given a default value.
@@ -88,7 +101,7 @@
 
 (define (select-clause clauses)
   (define total-weight (apply + (dict-values clauses)))
-  (define target-weight (random 0 total-weight))
+  (define target-weight ((current-clause-selector) total-weight clauses))
   (let loop
     ([remaining-clauses clauses]
      (sum-so-far 0))

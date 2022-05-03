@@ -42,7 +42,7 @@
  Evaluates a rule as follows:
 
  The rule's clauses' weight thunks are all evaluated, then try thunks are
- evaluated at random, weighted by their corresponding computed weight, until
+ selected according to @racket[(current-clause-selector)] and evaluated until
  one of them succeeds, i.e., doesn't backtrack. (See @racket[backtrack] and
  @racket[exn:backtrack].) If a clause succeeds, @racket[rule-evaluate] returns
  the result of its try thunk. If @emph{no} clause succeeds, then the entire
@@ -86,6 +86,61 @@
 
  This is useful for tagging rules with additional state that needs to remain
  consistent with respect to clauses being tried but failing.
+}
+
+@defparam[current-clause-selector clause-selector clause-selector/c]{
+ A parameter that decides which clause to try whenever one is called for by
+ @racket[rule-evaluate]. Its value is a procedure, called a
+ @emph{clause selector}, that accepts two arguments: the total weight of all
+ clauses currently being considered, and an association list of said clauses.
+ The total weight is a @racket[natural?] and the procedure must produce a
+ @racket[natural?] strictly less than that one. The total weight is guaranteed
+ not to be @racket[0]. (See @racket[clause-selector/c] for the exact
+ specification of the contract.)
+
+ Note that the total weight and the individual weights of the clauses passed as
+ arguments may have been multiplied by a shared factor to guaranteed that
+ they're natural numbers. The relationship that a clause's likelihood of being
+ selected equals its weight divided by the total weight is preserved.
+
+ Note that the total weight passed to the clause selector may be different from
+ the sum of the original individual weights of the clauses (particularly if
+ said sum is fractional), but the clauses are guaranteed to be assigned the
+ same relative weights as if it were, preserving the relationship that a
+ clause's likelihood of being selected equals its weight divided by the total
+ weight.
+
+ Clause selectors may feel free to ignore their second argument; it's provided
+ for when extra introspection is desired, but a "fair" selector most likely has
+ no use for it.
+
+ The default clause selector implements a "fair" random selection; see
+ @racket[default-clause-selector] for specifics.
+
+ Beware that a rule that is well behaved with the default clause selector may
+ not terminate if a different one were to be used. For example:
+
+ @racketblock[(define-rule very-small
+                (~> "very " (very-small))
+                (~> "small"))]
+
+ This will not terminate if the selector always produces @racket[0].
+}
+
+@defthing[default-clause-selector clause-selector/c]{
+ The default value of @racket[current-clause-selector]. It produces
+ @racket[(random 0 total-weight)], where @racket[total-weight] is its first
+ argument. Because it uses @racket[random], its output can be controlled with
+ @racket[current-pseudo-random-generator].
+}
+
+@defthing[clause-selector/c contract?]{
+ The contract that applies to the value of @racket[current-clause-selector].
+ It's defined to be:
+
+ @racketblock[(->i ([total-weight natural?]
+                    [_ (listof (cons/c (-> any/c) natural?))])
+                   [_ (total-weight) (and/c natural? (</c total-weight))])]
 }
 
 @section{Syntax}
