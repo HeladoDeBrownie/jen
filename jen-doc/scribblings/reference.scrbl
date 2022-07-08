@@ -103,13 +103,6 @@
  they're natural numbers. The relationship that a clause's likelihood of being
  selected equals its weight divided by the total weight is preserved.
 
- Note that the total weight passed to the clause selector may be different from
- the sum of the original individual weights of the clauses (particularly if
- said sum is fractional), but the clauses are guaranteed to be assigned the
- same relative weights as if it were, preserving the relationship that a
- clause's likelihood of being selected equals its weight divided by the total
- weight.
-
  Clause selectors may feel free to ignore their second argument; it's provided
  for when extra introspection is desired, but a "fair" selector most likely has
  no use for it.
